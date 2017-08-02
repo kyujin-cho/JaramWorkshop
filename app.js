@@ -47,6 +47,10 @@ app.use(function(err, req, res, next) {
 Promise.resolve()
 .then(() => {
   db.open('./db.sqlite', {Promise})
+  return db.run("CREATE TABLE IF NOT EXISTS POSTS(_id INTEGER PRIMARY KEY INCREMENT, title TEXT, contents TEXT, name TEXT, pw TEXT, date DATETIME")
+})
+.then(() => {
+  return db.run("CREATE TABLE IF NOT EXISTS POSTS(_id INTEGER PRIMARY KEY INCREMENT, contents TEXT, name TEXT, pw TEXT, post_id INTEGER, date DATETIME")
 })
 .catch(err => console.error(err.stack))
 
