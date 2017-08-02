@@ -4,28 +4,40 @@ var db = require('sqlite')
 
 Promise.resolve()
 .then(()=> {
-    db.open('../../db.sqlite', {Promise})
+  db.open('../../db.sqlite', {Promise})
 })
 .catch(err => console.error(err.stack))
 
+router.post('/', function(req, res, next) {
+  db.exec("INSERT INTO COMMENTS(contents, name, pw, post_id, date) VALUES('" +
+    req.body.contents + "', '" + req.body.name + "', '" + 
+    req.body.password + "', " + req.body.post_id + "', '" + new Date() + "');"
+  )
+  .then(() => {
+    res.json({success: true})
+  })  
+})
+
 /* GET home page. */
-router.get('/posts/:postid/comments/:id', function(req, res, next) {
+router.get('/:id', function(req, res, next) {
   var response_data = {}
-  db.get("SELECT * FROM COMMENTS WHERE _id=" + req.param.id)
+  db.get("SELECT * FROM COMMENTS WHERE _id=" + req.params.id)
   .then(comments => { 
-    response_data['title'] = comments['title']
-    response_data['contents'] = comments['contents']
-    reponse_data['name'] = comments['name']
-    reponse_data['date'] = comments['date']
+    if(comments !== undefined) {
+      console.log('11')
+      response_data['contents'] = comments['contents']
+      reponse_data['name'] = comments['name']
+      reponse_data['date'] = comments['date']
+    }
     res.json(response_data)
   })
 });
 
-router.put('/posts/:postid/comments/:id', function(req, res, next) {
+router.put('/:id', function(req, res, next) {
   db.get("SELECT * FROM COMMENTS WHERE _id=" + req.params.id)
   .then(comment => {
     if(comment.password === req.body.password)
-      return db.exec("UPDATE FROM COMMENTS WHERE _id=" + req.params.id + "SET title=" + req.body.title + ", contents=" + req.body.contents)
+      return db.exec("UPDATE FROM COMMENTS WHERE _id=" + req.params.id + " SET contents=" + req.body.contents)
     else
       throw new Error("Invalid Password")
   })
@@ -40,7 +52,7 @@ router.put('/posts/:postid/comments/:id', function(req, res, next) {
   })
 })
 
-router.delete('/posts/:postid/comments/:id', function(req, res, next) {
+router.delete('/:id', function(req, res, next) {
   db.get("SELECT * FROM COMMENTS WHERE _id=" + req.params.id)
   .then(comment => {
     if(comment.password === req.body.password)

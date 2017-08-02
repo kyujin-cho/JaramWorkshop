@@ -5,8 +5,7 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
-var index = require('./routes/index');
-var users = require('./routes/users');
+var api = require('./routes/api');
 
 var db = require('sqlite');
 var app = express();
@@ -23,8 +22,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', index);
-app.use('/users', users);
+app.use('/api', api);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -46,11 +44,13 @@ app.use(function(err, req, res, next) {
 
 Promise.resolve()
 .then(() => {
-  db.open('./db.sqlite', {Promise})
-  return db.run("CREATE TABLE IF NOT EXISTS POSTS(_id INTEGER PRIMARY KEY INCREMENT, title TEXT, contents TEXT, name TEXT, pw TEXT, date DATETIME")
+  return db.open('./db.sqlite', {Promise})
 })
 .then(() => {
-  return db.run("CREATE TABLE IF NOT EXISTS POSTS(_id INTEGER PRIMARY KEY INCREMENT, contents TEXT, name TEXT, pw TEXT, post_id INTEGER, date DATETIME")
+  return db.run("CREATE TABLE IF NOT EXISTS POSTS(_id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, contents TEXT, name TEXT, pw TEXT, date TEXT)")
+})
+.then(() => {
+  return db.run("CREATE TABLE IF NOT EXISTS COMMENTS(_id INTEGER PRIMARY KEY AUTOINCREMENT, contents TEXT, name TEXT, pw TEXT, post_id INTEGER, date TEXT)")
 })
 .catch(err => console.error(err.stack))
 
