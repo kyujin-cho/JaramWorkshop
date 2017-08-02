@@ -8,6 +8,7 @@ var bodyParser = require('body-parser');
 var index = require('./routes/index');
 var users = require('./routes/users');
 
+var db = require('sqlite');
 var app = express();
 
 // view engine setup
@@ -42,5 +43,11 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+Promise.resolve()
+.then(() => {
+  db.open('./db.sqlite', {Promise})
+})
+.catch(err => console.error(err.stack))
 
 module.exports = app;
