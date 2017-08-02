@@ -12,11 +12,11 @@ Promise.resolve()
 router.get('/posts/:postid/comments/:id', function(req, res, next) {
   var response_data = {}
   db.get("SELECT * FROM COMMENTS WHERE _id=" + req.param.id)
-  .then(post => { 
-    response_data['title'] = post['title']
-    response_data['contents'] = post['contents']
-    reponse_data['name'] = post['name']
-    reponse_data['date'] = post['date']
+  .then(comments => { 
+    response_data['title'] = comments['title']
+    response_data['contents'] = comments['contents']
+    reponse_data['name'] = comments['name']
+    reponse_data['date'] = comments['date']
     res.json(response_data)
   })
 });
