@@ -50,4 +50,19 @@ Promise.resolve()
 })
 .catch(err => console.error(err.stack))
 
+
+
+Promise.resolve()
+.then(() => {
+  return db.open('./db.sqlite', {Promise})
+})
+.then(() => {
+  return db.run("CREATE TABLE IF NOT EXISTS POSTS(_id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, contents TEXT, name TEXT, pw TEXT, date TEXT)")
+})
+.then(() => {
+  return db.run("CREATE TABLE IF NOT EXISTS COMMENTS(_id INTEGER PRIMARY KEY AUTOINCREMENT, contents TEXT, name TEXT, pw TEXT, post_id INTEGER, date TEXT)")
+})
+.catch(err => console.error(err.stack))
+
+
 module.exports = app;
