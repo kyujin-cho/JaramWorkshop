@@ -35,16 +35,16 @@ router.post('/', function(req, res, next) {
 })
 
 router.get('/:id', function(req, res, next) {
-  var response_data = {}
   
   db.get("SELECT * FROM POSTS WHERE _id=" + req.params.id)
   .then(post => { 
+    var response_data = {}
     if(post !== undefined) {
       console.log('11')
       response_data['title'] = post['title']
       response_data['contents'] = post['contents']
-      reponse_data['name'] = post['name']
-      reponse_data['date'] = post['date']
+      response_data['name'] = post['name']
+      response_data['date'] = post['date']
     }
     res.json(response_data)
   })
