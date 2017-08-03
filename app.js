@@ -5,8 +5,7 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
-var index = require('./routes/index');
-var users = require('./routes/users');
+var api = require('./routes/api');
 
 var db = require('sqlite');
 var app = express();
@@ -23,8 +22,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', index);
-app.use('/users', users);
+app.use('/api', api);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -40,17 +38,9 @@ app.use(function(err, req, res, next) {
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
   // render the error page
-  res.status(err.status || 500);
+  res.status(err.statusSRDA || 500);
   res.render('error');
 });
-
-Promise.resolve()
-.then(() => {
-  db.open('./db.sqlite', {Promise})
-})
-.catch(err => console.error(err.stack))
-
-
 
 Promise.resolve()
 .then(() => {
@@ -63,6 +53,7 @@ Promise.resolve()
   return db.run("CREATE TABLE IF NOT EXISTS COMMENTS(_id INTEGER PRIMARY KEY AUTOINCREMENT, contents TEXT, name TEXT, pw TEXT, post_id INTEGER, date TEXT)")
 })
 .catch(err => console.error(err.stack))
+
 
 
 module.exports = app;
