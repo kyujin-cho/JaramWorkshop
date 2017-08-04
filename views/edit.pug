@@ -1,0 +1,15 @@
+doctype html
+html
+    head
+        title Write Post
+    body
+        form(action='/api/posts', method="POST")
+            label(for="name") 이름
+            input#name(name="name", type="text")
+            label(for="password") 비밀번호
+            input#password(name="password", type="password")
+            label(for="title") 제목
+            input#title(name="title", type="text")
+            label(for="contents") 내용
+            input#contents(name="contents", type="text")
+            input(type="submit")

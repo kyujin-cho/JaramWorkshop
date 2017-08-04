@@ -19440,7 +19440,7 @@ var App = function (_React$Component) {
 
         var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this, props));
 
-        _this.state = { post: {}, comments: [], name: '', password: '', contents: '' };
+        _this.state = { post: {}, comments: [], current_comment: -1, name: '', password: '', contents: '', postPassword: '', commentPassword: '', isShowingDeleteField: false };
         return _this;
     }
 
@@ -19499,10 +19499,12 @@ var App = function (_React$Component) {
                                 this.setState({
                                     post: post.data
                                 });
-                                _context2.next = 8;
+                                document.querySelector('.delete_area').setAttribute('style', 'display: none;');
+                                document.querySelector('.comment_delete_area').setAttribute('style', 'display: none;');
+                                _context2.next = 10;
                                 return this.refreshComment();
 
-                            case 8:
+                            case 10:
                             case 'end':
                                 return _context2.stop();
                         }
@@ -19541,13 +19543,108 @@ var App = function (_React$Component) {
             });
         }
     }, {
-        key: 'sendComment',
+        key: 'onPostPasswordChange',
+        value: function onPostPasswordChange(e) {
+            e.preventDefault();
+            this.setState({
+                postPassword: e.target.value
+            });
+        }
+    }, {
+        key: 'onCommentPasswordChange',
+        value: function onCommentPasswordChange(e) {
+            e.preventDefault();
+            this.setState({
+                commentPassword: e.target.value
+            });
+        }
+    }, {
+        key: 'deletePost',
         value: function () {
             var _ref3 = _asyncToGenerator(regeneratorRuntime.mark(function _callee3(e) {
                 var request_body, response;
                 return regeneratorRuntime.wrap(function _callee3$(_context3) {
                     while (1) {
                         switch (_context3.prev = _context3.next) {
+                            case 0:
+                                e.preventDefault();
+                                request_body = {
+                                    headers: {
+                                        'X-Password': this.state.postPassword
+                                    }
+                                };
+                                _context3.next = 4;
+                                return _axios2.default.delete('/api/posts/' + this.state.post.id, request_body);
+
+                            case 4:
+                                response = _context3.sent;
+
+                                if (response.data.success) window.location.href = '/posts';else alert('비밀번호가 틀렸어요');
+
+                            case 6:
+                            case 'end':
+                                return _context3.stop();
+                        }
+                    }
+                }, _callee3, this);
+            }));
+
+            function deletePost(_x) {
+                return _ref3.apply(this, arguments);
+            }
+
+            return deletePost;
+        }()
+    }, {
+        key: 'deleteComment',
+        value: function () {
+            var _ref4 = _asyncToGenerator(regeneratorRuntime.mark(function _callee4(e) {
+                var request_body, response;
+                return regeneratorRuntime.wrap(function _callee4$(_context4) {
+                    while (1) {
+                        switch (_context4.prev = _context4.next) {
+                            case 0:
+                                e.preventDefault();
+                                request_body = {
+                                    headers: {
+                                        'X-Password': this.state.commentPassword
+                                    }
+                                };
+                                _context4.next = 4;
+                                return _axios2.default.delete('/api/comments/' + this.state.comments[this.state.current_comment].id, request_body);
+
+                            case 4:
+                                response = _context4.sent;
+
+                                if (response.data.success) {
+                                    this.refreshComment();
+                                    this.toggleCommentDeleteArea(-1);
+                                } else {
+                                    alert('비밀번호가 틀렸어요');
+                                }
+
+                            case 6:
+                            case 'end':
+                                return _context4.stop();
+                        }
+                    }
+                }, _callee4, this);
+            }));
+
+            function deleteComment(_x2) {
+                return _ref4.apply(this, arguments);
+            }
+
+            return deleteComment;
+        }()
+    }, {
+        key: 'sendComment',
+        value: function () {
+            var _ref5 = _asyncToGenerator(regeneratorRuntime.mark(function _callee5(e) {
+                var request_body, response;
+                return regeneratorRuntime.wrap(function _callee5$(_context5) {
+                    while (1) {
+                        switch (_context5.prev = _context5.next) {
                             case 0:
                                 e.preventDefault();
                                 request_body = {
@@ -19558,31 +19655,41 @@ var App = function (_React$Component) {
                                 };
 
                                 console.log(request_body);
-                                _context3.next = 5;
+                                _context5.next = 5;
                                 return _axios2.default.post('/api/comments', request_body);
 
                             case 5:
-                                response = _context3.sent;
-                                _context3.next = 8;
+                                response = _context5.sent;
+                                _context5.next = 8;
                                 return this.refreshComment();
 
                             case 8:
                             case 'end':
-                                return _context3.stop();
+                                return _context5.stop();
                         }
                     }
-                }, _callee3, this);
+                }, _callee5, this);
             }));
 
-            function sendComment(_x) {
-                return _ref3.apply(this, arguments);
+            function sendComment(_x3) {
+                return _ref5.apply(this, arguments);
             }
 
             return sendComment;
         }()
     }, {
+        key: 'toggleCommentDeleteArea',
+        value: function toggleCommentDeleteArea(id) {
+            this.setState({
+                current_comment: id
+            });
+            if (this.state.current_comment === -1) document.querySelector('.comment_delete_area').setAttribute('style', 'display: none;');else document.querySelector('.comment_delete_area').removeAttribute('style');
+        }
+    }, {
         key: 'render',
         value: function render() {
+            var _this2 = this;
+
             return _react2.default.createElement(
                 'div',
                 null,
@@ -19601,7 +19708,71 @@ var App = function (_React$Component) {
                     null,
                     this.state.post.contents
                 ),
-                _react2.default.createElement(CommentList, { comments: this.state.comments }),
+                _react2.default.createElement('br', null),
+                _react2.default.createElement(
+                    'button',
+                    { onClick: function onClick() {
+                            _this2.setState({
+                                isShowingDeleteField: !_this2.state.isShowingDeleteField
+                            });
+                            if (_this2.state.isShowingDeleteField) document.querySelector(".delete_area").setAttribute("style", "display: none;");else document.querySelector(".delete_area").removeAttribute("style");
+                        } },
+                    '\uC0AD\uC81C\uD558\uAE30'
+                ),
+                _react2.default.createElement(
+                    'div',
+                    { className: 'delete_area' },
+                    _react2.default.createElement(
+                        'label',
+                        { htmlFor: '' },
+                        '\uAE00 \uC0AD\uC81C'
+                    ),
+                    _react2.default.createElement(
+                        'label',
+                        { htmlFor: 'post_password' },
+                        '\uBE44\uBC00\uBC88\uD638\uB97C \uC785\uB825\uD558\uC138\uC694'
+                    ),
+                    _react2.default.createElement('input', { type: 'password', onChange: this.onPostPasswordChange.bind(this), name: 'post_password', id: 'post_password' }),
+                    _react2.default.createElement(
+                        'button',
+                        { onClick: this.deletePost.bind(this) },
+                        '\uD655\uC778'
+                    )
+                ),
+                _react2.default.createElement(
+                    'div',
+                    { className: 'comment_delete_area' },
+                    _react2.default.createElement(
+                        'label',
+                        { htmlFor: '' },
+                        '\uB313\uAE00 \uC0AD\uC81C'
+                    ),
+                    _react2.default.createElement('br', null),
+                    _react2.default.createElement(
+                        'label',
+                        { htmlFor: 'comment_password' },
+                        '\uBE44\uBC00\uBC88\uD638\uB97C \uC785\uB825\uD558\uC138\uC694'
+                    ),
+                    _react2.default.createElement('input', { type: 'password', onChange: this.onCommentPasswordChange.bind(this), name: 'comment_password', id: 'comment_password' }),
+                    _react2.default.createElement(
+                        'button',
+                        { onClick: this.deleteComment.bind(this) },
+                        '\uD655\uC778'
+                    ),
+                    _react2.default.createElement(
+                        'button',
+                        { onClick: function onClick() {
+                                _this2.toggleCommentDeleteArea(-1);
+                            } },
+                        '\uCDE8\uC18C'
+                    )
+                ),
+                _react2.default.createElement(
+                    'h1',
+                    null,
+                    '\uB313\uAE00'
+                ),
+                _react2.default.createElement(CommentList, { comments: this.state.comments, 'delete': this.toggleCommentDeleteArea.bind(this) }),
                 _react2.default.createElement(
                     'div',
                     null,
@@ -19648,6 +19819,8 @@ var CommentList = function (_React$Component2) {
     _createClass(CommentList, [{
         key: 'render',
         value: function render() {
+            var _this4 = this;
+
             var comments = _react2.default.createElement(
                 'div',
                 null,
@@ -19655,7 +19828,7 @@ var CommentList = function (_React$Component2) {
             );
             if (this.props.comments) {
                 comments = this.props.comments.map(function (comment, index) {
-                    return _react2.default.createElement(Comment, { comment: comment, key: index });
+                    return _react2.default.createElement(Comment, { comment: comment, key: index, index: index, 'delete': _this4.props.delete });
                 });
             }
             return _react2.default.createElement(
@@ -19681,20 +19854,33 @@ var Comment = function (_React$Component3) {
     _createClass(Comment, [{
         key: 'render',
         value: function render() {
+            var _this6 = this;
+
             return _react2.default.createElement(
                 'ul',
                 null,
                 _react2.default.createElement(
                     'li',
                     null,
-                    this.props.comment.name,
+                    '제목:' + this.props.comment.name,
                     ' '
                 ),
                 _react2.default.createElement(
                     'li',
                     null,
-                    this.props.comment.contents,
+                    '내용:' + this.props.comment.contents,
                     ' '
+                ),
+                _react2.default.createElement(
+                    'li',
+                    null,
+                    _react2.default.createElement(
+                        'button',
+                        { onClick: function onClick() {
+                                _this6.props.delete(_this6.props.index);
+                            } },
+                        '\uC0AD\uC81C'
+                    )
                 )
             );
         }

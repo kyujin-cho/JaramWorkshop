@@ -55,7 +55,9 @@ router.put('/:id', function(req, res, next) {
 router.delete('/:id', function(req, res, next) {
   db.get("SELECT * FROM COMMENTS WHERE _id=" + req.params.id)
   .then(comment => {
-    if(comment.password === req.body.password)
+    console.log(comment.pw)
+    console.log(req.headers['x-password'])
+    if(comment.pw === req.headers['x-password'])
       return db.exec("DELETE FROM COMMENTS WHERE _id=" + req.params.id)
     else
       throw new Error("Invalid Password")

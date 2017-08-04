@@ -71,9 +71,16 @@ router.put('/:id', function(req, res, next) {
 })
 
 router.delete('/:id', function(req, res, next) {
+  console.log(req.params.id)
+  console.log(1)
   db.get("SELECT * FROM POSTS WHERE _id=" + req.params.id)
-  .then(comment => {
-    if(comment.password === req.body.password)
+  .then(post => {
+    console.log(req.headers)
+    console.log(2)
+    console.log(post['pw'])
+
+    console.log(req.headers['x-password'])
+    if(post['pw'] === req.headers['x-password'])
       return db.exec("DELETE FROM POSTS WHERE _id=" + req.params.id)
     else
       throw new Error("Invalid Password")
@@ -98,7 +105,8 @@ router.get('/:id/comments', function(req, res, next) {
       response_body.push({
         contents: comment['contents'],
         name: comment['name'],
-        date: comment['date']
+        date: comment['date'],
+        id: comment['_id']
       })
     })
     res.json(response_body)
