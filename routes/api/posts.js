@@ -16,6 +16,7 @@ router.get('/', function(req, res, next) {
   .then(post => { 
     if(post !== undefined) {
       console.log('11')
+      response_data['id'] = post['_id']
       response_data['title'] = post['title']
       response_data['contents'] = post['contents']
       reponse_data['name'] = post['name']
