@@ -7,7 +7,7 @@ var comments = require('./comments')
 
 router.use('/posts', post_list)
 // router.use('/posts/:id', posts)
-router.use('/posts/:id/comments', comment_list)
+// router.use('/posts/:id/comments', comment_list)
 router.use('/comments', comments)
 
 module.exports = router

@@ -8,21 +8,22 @@ class App extends React.Component {
         this.state = {post: {}, comments: [], name: '', password: '', contents: ''}
     }
 
-    async componentDidMount() {
-        const path = window.location.pathname
-        const num = path.match(/\/api\/posts\/[0-9]+/)[0].replace('/api/posts/', '')
-        const post = await axios.get('/api/posts/' + num)
-        this.setState({
-            post: post
-        })
-        await refreshComment()
-    }
-
     async refreshComment() {
+        console.log(this.state.post)
         const comments = await axios.get('/api/posts/' + this.state.post.id + '/comments')
         this.setState({
-            comments: comments
+            comments: comments.data
         })
+        console.log(comments.data)
+    }
+    async componentDidMount() {
+        const path = window.location.pathname
+        const num = path.match(/\/posts\/[0-9]+/)[0].replace('/posts/', '')
+        const post = await axios.get('/api/posts/' + num)
+        this.setState({
+            post: post.data
+        })
+        await this.refreshComment()
     }
 
     onNameChange(e) {
@@ -54,8 +55,9 @@ class App extends React.Component {
             password: this.state.password,
             post_id: this.state.post.id
         }
+        console.log(request_body)
         const response = await axios.post('/api/comments', request_body)
-        await refreshComment()
+        await this.refreshComment()
     }
 
     render() {
@@ -66,11 +68,11 @@ class App extends React.Component {
             <span>{this.state.post.contents}</span>
             <CommentList comments={this.state.comments} />
             <div>
-                <label for="name">이름</label>
+                <label htmlFor="name">이름</label>
                 <input type="text" onChange={this.onNameChange.bind(this)} id="name" name="name"></input>
-                <label for="password">비밀번호</label>
+                <label htmlFor="password">비밀번호</label>
                 <input type="password" onChange={this.onPasswordChange.bind(this)} id="password" name="password"></input>
-                <label for="contents">내용</label>
+                <label htmlFor="contents">내용</label>
                 <input onChange={this.onContentsChange.bind(this)} id="contents" name="contents"></input>
                 <button onClick={this.sendComment.bind(this)}>전송</button>
             </div>

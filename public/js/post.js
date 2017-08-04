@@ -19445,29 +19445,27 @@ var App = function (_React$Component) {
     }
 
     _createClass(App, [{
-        key: 'componentDidMount',
+        key: 'refreshComment',
         value: function () {
             var _ref = _asyncToGenerator(regeneratorRuntime.mark(function _callee() {
-                var path, num, post;
+                var comments;
                 return regeneratorRuntime.wrap(function _callee$(_context) {
                     while (1) {
                         switch (_context.prev = _context.next) {
                             case 0:
-                                path = window.location.pathname;
-                                num = path.match(/\/api\/posts\/[0-9]+/)[0].replace('/api/posts/', '');
-                                _context.next = 4;
-                                return _axios2.default.get('/api/posts/' + num);
+                                console.log(this.state.post);
+                                _context.next = 3;
+                                return _axios2.default.get('/api/posts/' + this.state.post.id + '/comments');
 
-                            case 4:
-                                post = _context.sent;
+                            case 3:
+                                comments = _context.sent;
 
                                 this.setState({
-                                    post: post
+                                    comments: comments.data
                                 });
-                                _context.next = 8;
-                                return refreshComment();
+                                console.log(comments.data);
 
-                            case 8:
+                            case 6:
                             case 'end':
                                 return _context.stop();
                         }
@@ -19475,32 +19473,36 @@ var App = function (_React$Component) {
                 }, _callee, this);
             }));
 
-            function componentDidMount() {
+            function refreshComment() {
                 return _ref.apply(this, arguments);
             }
 
-            return componentDidMount;
+            return refreshComment;
         }()
     }, {
-        key: 'refreshComment',
+        key: 'componentDidMount',
         value: function () {
             var _ref2 = _asyncToGenerator(regeneratorRuntime.mark(function _callee2() {
-                var comments;
+                var path, num, post;
                 return regeneratorRuntime.wrap(function _callee2$(_context2) {
                     while (1) {
                         switch (_context2.prev = _context2.next) {
                             case 0:
-                                _context2.next = 2;
-                                return _axios2.default.get('/api/posts/' + this.state.post.id + '/comments');
-
-                            case 2:
-                                comments = _context2.sent;
-
-                                this.setState({
-                                    comments: comments
-                                });
+                                path = window.location.pathname;
+                                num = path.match(/\/posts\/[0-9]+/)[0].replace('/posts/', '');
+                                _context2.next = 4;
+                                return _axios2.default.get('/api/posts/' + num);
 
                             case 4:
+                                post = _context2.sent;
+
+                                this.setState({
+                                    post: post.data
+                                });
+                                _context2.next = 8;
+                                return this.refreshComment();
+
+                            case 8:
                             case 'end':
                                 return _context2.stop();
                         }
@@ -19508,11 +19510,11 @@ var App = function (_React$Component) {
                 }, _callee2, this);
             }));
 
-            function refreshComment() {
+            function componentDidMount() {
                 return _ref2.apply(this, arguments);
             }
 
-            return refreshComment;
+            return componentDidMount;
         }()
     }, {
         key: 'onNameChange',
@@ -19554,15 +19556,17 @@ var App = function (_React$Component) {
                                     password: this.state.password,
                                     post_id: this.state.post.id
                                 };
-                                _context3.next = 4;
+
+                                console.log(request_body);
+                                _context3.next = 5;
                                 return _axios2.default.post('/api/comments', request_body);
 
-                            case 4:
+                            case 5:
                                 response = _context3.sent;
-                                _context3.next = 7;
-                                return refreshComment();
+                                _context3.next = 8;
+                                return this.refreshComment();
 
-                            case 7:
+                            case 8:
                             case 'end':
                                 return _context3.stop();
                         }
@@ -19603,19 +19607,19 @@ var App = function (_React$Component) {
                     null,
                     _react2.default.createElement(
                         'label',
-                        { 'for': 'name' },
+                        { htmlFor: 'name' },
                         '\uC774\uB984'
                     ),
                     _react2.default.createElement('input', { type: 'text', onChange: this.onNameChange.bind(this), id: 'name', name: 'name' }),
                     _react2.default.createElement(
                         'label',
-                        { 'for': 'password' },
+                        { htmlFor: 'password' },
                         '\uBE44\uBC00\uBC88\uD638'
                     ),
                     _react2.default.createElement('input', { type: 'password', onChange: this.onPasswordChange.bind(this), id: 'password', name: 'password' }),
                     _react2.default.createElement(
                         'label',
-                        { 'for': 'contents' },
+                        { htmlFor: 'contents' },
                         '\uB0B4\uC6A9'
                     ),
                     _react2.default.createElement('input', { onChange: this.onContentsChange.bind(this), id: 'contents', name: 'contents' }),

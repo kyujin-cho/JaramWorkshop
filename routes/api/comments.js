@@ -11,7 +11,7 @@ Promise.resolve()
 router.post('/', function(req, res, next) {
   db.exec("INSERT INTO COMMENTS(contents, name, pw, post_id, date) VALUES('" +
     req.body.contents + "', '" + req.body.name + "', '" + 
-    req.body.password + "', " + req.body.post_id + "', '" + new Date() + "');"
+    req.body.password + "', " + req.body.post_id + ", '" + new Date() + "');"
   )
   .then(() => {
     res.json({success: true})

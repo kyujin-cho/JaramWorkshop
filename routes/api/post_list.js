@@ -41,6 +41,7 @@ router.get('/:id', function(req, res, next) {
     var response_data = {}
     if(post !== undefined) {
       console.log('11')
+      response_data['id'] = post['_id']
       response_data['title'] = post['title']
       response_data['contents'] = post['contents']
       response_data['name'] = post['name']
@@ -87,4 +88,21 @@ router.delete('/:id', function(req, res, next) {
     })
   })
 })
+
+router.get('/:id/comments', function(req, res, next) {
+  console.log(req.params.id)
+  db.all("SELECT * FROM COMMENTS WHERE post_id=" + req.params.id)
+  .then(comments => {
+    var response_body = []
+    comments.forEach(comment => {
+      response_body.push({
+        contents: comment['contents'],
+        name: comment['name'],
+        date: comment['date']
+      })
+    })
+    res.json(response_body)
+  })
+})
+
 module.exports = router;

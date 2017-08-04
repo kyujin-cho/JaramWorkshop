@@ -11,7 +11,7 @@ class App extends React.Component {
     async componentDidMount() {
         const posts = await axios.get('/api/posts')
         this.setState({
-            posts: this.state[posts].concat(posts)
+            posts: posts.data
         })
     }
 
@@ -28,6 +28,7 @@ class App extends React.Component {
 class PostList extends React.Component {
     render() {
         let posts = <div>Loading Posts... </div>
+        console.log(this.props.posts)
          if(this.props.posts) {
             posts = this.props.posts.map((post, index) => {
                 return <Post post={post} key={index} />

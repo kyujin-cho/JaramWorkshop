@@ -19460,7 +19460,7 @@ var App = function (_React$Component) {
                                 posts = _context.sent;
 
                                 this.setState({
-                                    posts: this.state[posts].concat(posts)
+                                    posts: posts.data
                                 });
 
                             case 4:
@@ -19515,6 +19515,7 @@ var PostList = function (_React$Component2) {
                 null,
                 'Loading Posts... '
             );
+            console.log(this.props.posts);
             if (this.props.posts) {
                 posts = this.props.posts.map(function (post, index) {
                     return _react2.default.createElement(Post, { post: post, key: index });
